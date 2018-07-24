@@ -12,7 +12,7 @@
 // You NEED to make this SOMETHING ELSE
 
 
-int main() {
+int main(int argc, char *argv[]) {
     // Code pulled from William Mahoney's home/CSCI4500 directory
     // Set up shared memory
 
@@ -46,7 +46,9 @@ int main() {
         exit(1);
     }
 
-    printf("Ha! It worked! My shared memory is at %p\n", the_data);
+    //printf("Ha! It worked! My shared memory is at %p\n", the_data);
+
+
 
     return (0);
 
