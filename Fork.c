@@ -6,6 +6,8 @@
 #include <fcntl.h>    /* For O_* constants */
 #include <stdlib.h>   /* For exit */
 #include <unistd.h>
+#include <stdbool.h>
+#include <ctype.h>
 
 #define MY_SHARED_MEMORY "/ndobesh"
 
@@ -17,7 +19,7 @@ void usage() {
            "samp_seq:\t name of file that has sequence to search for\n");
 }
 
-/*bool isNumber(char number[])
+bool isNumber(char number[])
 {
     int i = 0;
 
@@ -31,7 +33,7 @@ void usage() {
             return false;
     }
     return true;
-}*/
+}
 
 
 int main(int argc, char *argv[]) {
@@ -68,7 +70,7 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    //printf("Ha! It worked! My shared memory is at %p\n", the_data);
+    printf("Ha! It worked! My shared memory is at %p\n", the_data);
 
     //Data validation partially comes from: https://github.com/ciphron/aseq/blob/master/aseq.c
     if (argc < 4) {
@@ -98,6 +100,14 @@ int main(int argc, char *argv[]) {
         usage();
         exit(1);
     }
+
+    if (!isNumber(argv[1])) {
+        fprintf(stderr, "Non-integer value inputted\n");
+        usage();
+        exit(1);
+    }
+
+    printf("Validation Complete!\n");
 
     return (0);
 
