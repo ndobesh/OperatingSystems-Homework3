@@ -7,9 +7,31 @@
 #include <stdlib.h>   /* For exit */
 #include <unistd.h>
 
-// You NEED to make this SOMETHING ELSE
 #define MY_SHARED_MEMORY "/ndobesh"
-// You NEED to make this SOMETHING ELSE
+
+//Structure for usage function comes from: https://github.com/ciphron/aseq/blob/master/aseq.c
+void usage() {
+    printf("usage: Fork proc_num main_seq samp_seq\n"
+           "proc_num:\t number of processes to use to find sequence\n"
+           "main_seq:\t name of file to search through\n"
+           "samp_seq:\t name of file that has sequence to search for\n");
+}
+
+/*bool isNumber(char number[])
+{
+    int i = 0;
+
+    //checking for negative numbers
+    if (number[0] == '-')
+        i = 1;
+    for (; number[i] != 0; i++)
+    {
+        //if (number[i] > '9' || number[i] < '0')
+        if (!isdigit(number[i]))
+            return false;
+    }
+    return true;
+}*/
 
 
 int main(int argc, char *argv[]) {
@@ -48,7 +70,34 @@ int main(int argc, char *argv[]) {
 
     //printf("Ha! It worked! My shared memory is at %p\n", the_data);
 
+    //Data validation partially comes from: https://github.com/ciphron/aseq/blob/master/aseq.c
+    if (argc < 4) {
+        fprintf(stderr, "No file specified\n");
+        usage();
+        exit(1);
+    }
 
+    if (argc > 4) {
+        fprintf(stderr, "Too many arguments\n");
+        usage();
+        exit(1);
+    }
+
+    FILE *file1 = fopen(argv[2], "rb");
+
+    if (file1 == NULL) {
+        fprintf(stderr, "Failed to open file\n");
+        usage();
+        exit(1);
+    }
+
+    FILE *file2 = fopen(argv[3], "rb");
+
+    if (file2 == NULL) {
+        fprintf(stderr, "Failed to open file\n");
+        usage();
+        exit(1);
+    }
 
     return (0);
 
