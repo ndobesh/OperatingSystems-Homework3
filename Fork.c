@@ -8,15 +8,21 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <ctype.h>
-#include <memory.h>
 
 #define MY_SHARED_MEMORY "/ndobesh"
 
-struct a3 {
+char seq[1024 * 1024];
+char sub[10240];
+long pos, count;
+
+/*
+typedef struct A3 A3;
+struct A3{
     char seq[1024 * 1024];
     char sub[10240];
     long pos, count;
-} A3;
+};
+*/
 
 //Structure for usage function comes from: https://github.com/ciphron/aseq/blob/master/aseq.c
 void usage() {
@@ -118,33 +124,50 @@ int main(int argc, char *argv[]) {
 
     printf("Validation Complete!\n");
 
-    //TODO: Create char array from files
     //TODO: Create sequencer
     //TODO: Display results of sequencer
 
     fseek(file1, 0, SEEK_END);
-    long fsize = ftell(file1);
+    long fsize1 = ftell(file1);
     fseek(file1, 0, SEEK_SET);
 
-    char *buffer1 = malloc((size_t) fsize);
+    char *buffer1 = malloc((size_t) fsize1);
 
-    fread(buffer1, (size_t) fsize, 1, file1);
+    fread(buffer1, (size_t) fsize1, 1, file1);
 
-    fclose(file1);
+    /*A3 seq[1048576];
+    size_t i;
 
-    for (int i = 0; i < sizeof(buffer1); ++i) {
-        memcpy(&A3.seq[i], buffer1 + i * sizeof(buffer1), sizeof(buffer1));
-    }
+    for (i = 0; i < 1048576; ++i) {
+        memcpy(&seq[i], buffer1 + i * 1048576, 1048576);
+    }*/
 
     //DEBUG: make sure sequence file was correctly sent to char array
-    for (int i = 0; i < fsize; i++) {
-        printf("%c", A3.seq[i]);
+    /*for (int i = 0; i < fsize1; i++) {
+        printf("%c", buffer1[i]);
     }
 
+    printf("\nSize of buffer1 is: %d\n",(int)strlen(buffer1));*/
+
+    fseek(file2, 0, SEEK_END);
+    long fsize2 = ftell(file1);
+    fseek(file2, 0, SEEK_SET);
+
+    char *buffer2 = malloc((size_t) fsize2);
+
+    fread(buffer2, (size_t) fsize2, 1, file2);
+
+    //DEBUG: make sure sequence file was correctly sent to char array
+    /*for (int i = 0; i < fsize2; i++) {
+        printf("%c", buffer2[i]);
+    }
+
+    printf("\nSize of buffer2 is: %d\n",(int)strlen(buffer2));*/
+
     free(buffer1);
-
-
-
+    fclose(file1);
+    free(buffer2);
+    fclose(file2);
     return (0);
 
 }
