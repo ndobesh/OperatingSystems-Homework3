@@ -132,14 +132,13 @@ int main(int argc, char *argv[]) {
 
     fclose(file1);
 
-    A3 seq[1024 * 1024];
     for (int i = 0; i < sizeof(buffer1); ++i) {
-        memcpy(seq[i].seq, buffer1 + i * sizeof(buffer1), sizeof(buffer1));
+        memcpy(&A3.seq[i], buffer1 + i * sizeof(buffer1), sizeof(buffer1));
     }
 
     //DEBUG: make sure sequence file was correctly sent to char array
     for (int i = 0; i < fsize; i++) {
-        printf("%c", seq[i].seq);
+        printf("%c", A3.seq[i]);
     }
 
     free(buffer1);
