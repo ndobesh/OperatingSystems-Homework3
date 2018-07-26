@@ -19,6 +19,8 @@ void usage() {
            "samp_seq:\t name of file that has sequence to search for\n");
 }
 
+//Function to validate number comes from:
+// https://stackoverflow.com/questions/29248585/c-checking-command-line-argument-is-integer-or-not
 bool isNumber(char number[])
 {
     int i = 0;
@@ -108,6 +110,29 @@ int main(int argc, char *argv[]) {
     }
 
     printf("Validation Complete!\n");
+
+    //TODO: Create char array from files
+    //TODO: Create sequencer
+    //TODO: Display results of sequencer
+
+    fseek(file1, 0, SEEK_END);
+    long fsize = ftell(file1);
+    fseek(file1, 0, SEEK_SET);
+
+    char *buffer = malloc((size_t) fsize);
+
+    fread(buffer, fsize, 1, file1);
+
+    fclose(file1);
+
+    //DEBUG: make sure sequence file was correctly sent to char array
+    for (int i = 0; i < fsize; i++) {
+        printf("%c", buffer[i]);
+    }
+
+    free(buffer);
+
+
 
     return (0);
 
