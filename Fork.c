@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    printf("Ha! It worked! My shared memory is at %p\n", the_data);
+    printf("Ha! It worked! My shared memory is at %p\n", (void *) the_data);
 
     //Data validation partially comes from: https://github.com/ciphron/aseq/blob/master/aseq.c
     if (argc < 4) {
@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
 
     char *buffer = malloc((size_t) fsize);
 
-    fread(buffer, fsize, 1, file1);
+    fread(buffer, (size_t) fsize, 1, file1);
 
     fclose(file1);
 
