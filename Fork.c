@@ -8,8 +8,15 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <memory.h>
 
 #define MY_SHARED_MEMORY "/ndobesh"
+
+struct a3 {
+    char seq[1024 * 1024];
+    char sub[10240];
+    long pos, count;
+} A3;
 
 //Structure for usage function comes from: https://github.com/ciphron/aseq/blob/master/aseq.c
 void usage() {
@@ -119,18 +126,23 @@ int main(int argc, char *argv[]) {
     long fsize = ftell(file1);
     fseek(file1, 0, SEEK_SET);
 
-    char *buffer = malloc((size_t) fsize);
+    char *buffer1 = malloc((size_t) fsize);
 
-    fread(buffer, (size_t) fsize, 1, file1);
+    fread(buffer1, (size_t) fsize, 1, file1);
 
     fclose(file1);
 
-    //DEBUG: make sure sequence file was correctly sent to char array
-    for (int i = 0; i < fsize; i++) {
-        printf("%c", buffer[i]);
+    A3 seq[1024 * 1024];
+    for (int i = 0; i < sizeof(buffer1); ++i) {
+        memcpy(seq[i].seq, buffer1 + i * sizeof(buffer1), sizeof(buffer1));
     }
 
-    free(buffer);
+    //DEBUG: make sure sequence file was correctly sent to char array
+    for (int i = 0; i < fsize; i++) {
+        printf("%c", seq[i].seq);
+    }
+
+    free(buffer1);
 
 
 
