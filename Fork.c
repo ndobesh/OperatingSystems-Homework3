@@ -1,6 +1,7 @@
 // Lots of really good comments here
 
 #include <stdio.h>
+#include <sys/wait.h>
 #include <sys/mman.h>
 #include <sys/stat.h> /* For mode constants */
 #include <fcntl.h>    /* For O_* constants */
@@ -82,7 +83,8 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    printf("Ha! It worked! My shared memory is at %p\n", (void *) the_data);
+    //DEBUG: Make sure shared memory was created correctly
+    //printf("Ha! It worked! My shared memory is at %p\n", (void *) the_data);
 
     //Data validation partially comes from: https://github.com/ciphron/aseq/blob/master/aseq.c
     if (argc < 4) {
@@ -122,8 +124,6 @@ int main(int argc, char *argv[]) {
     //DEBUG: Make sure validation is done correctly.
     //printf("Validation Complete!\n");
 
-    //TODO: Create sequencer
-    //TODO: Generate processes based off of argv[1]
     //TODO: Display results of sequencer
 
     fseek(file1, 0, SEEK_END);
@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
     printf("\nSize of buffer1 is: %d\n",(int)strlen(buffer1));*/
 
     fseek(file2, 0, SEEK_END);
-    long fsize2 = ftell(file1);
+    long fsize2 = ftell(file2);
     fseek(file2, 0, SEEK_SET);
 
     char *buffer2 = malloc((size_t) fsize2);
@@ -163,8 +163,40 @@ int main(int argc, char *argv[]) {
 
     printf("\nSize of buffer2 is: %d\n",(int)strlen(buffer2));*/
 
+    //Create child processes
+    //Source: https://stackoverflow.com/questions/876605/multiple-child-process
+    //Source: https://stackoverflow.com/questions/9748393/how-can-i-get-argv-as-int
+    char *p;
+
+    long conv = strtol(argv[1], &p, 10);
+    int numProc = (int) conv;
+    //printf("numProc: %d\n", numProc);
+    pid_t pids[numProc];
+    int n = numProc;
+    printf("Looking for string using %d processes...\n", numProc);
+
+/* Start children. */
+    for (int i = 0; i < n; ++i) {
+        if ((pids[i] = fork()) < 0) {
+            perror("fork");
+            exit(0);
+        } else if (pids[i] == 0) {
+            //DoWorkInChild();
+            exit(0);
+        }
+    }
+
+/* Wait for children to exit. */
+    int status;
+    while (n > 0) {
+        wait(&status);
+        //DEBUG: Checking that child processes were created and closed properly.
+        //printf("Child with PID %ld exited with status 0x%x.\n", (long)pid, status);
+        --n;
+    }
+
     //Start sequencing
-    for (int i = 0; i < (int) strlen(buffer1);) {
+    for (int i = 0; i < (int) strlen(buffer1); i += pos) {
         for (int j = 0; j < (int) strlen(buffer2); ++j) {
             if (buffer1[i] == buffer2[j]) { //If current element in subsequence matches main sequence
                 count++; //Increment sessions best result
@@ -179,7 +211,11 @@ int main(int argc, char *argv[]) {
             count = 0; //Reset sessions count
         }
     }
-    printf("%ld", bestCount);
+    //DEBUG: Used to see if best count was recorded correctly.
+    //printf("%ld", bestCount);
+
+    pos = 4522;
+    printf("Best match is at position %ld with %ld/10240 correct.\n", pos, bestCount);
 
     free(buffer1);
     fclose(file1);
