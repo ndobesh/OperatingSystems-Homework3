@@ -8,12 +8,11 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <memory.h>
 
 #define MY_SHARED_MEMORY "/ndobesh"
 
-char seq[1024 * 1024];
-char sub[10240];
-long pos, count;
+long pos, count, bestCount, bestPos = 0;
 
 /*
 typedef struct A3 A3;
@@ -34,15 +33,13 @@ void usage() {
 
 //Function to validate number comes from:
 // https://stackoverflow.com/questions/29248585/c-checking-command-line-argument-is-integer-or-not
-bool isNumber(char number[])
-{
+bool isNumber(char number[]) {
     int i = 0;
 
     //checking for negative numbers
     if (number[0] == '-')
         i = 1;
-    for (; number[i] != 0; i++)
-    {
+    for (; number[i] != 0; i++) {
         //if (number[i] > '9' || number[i] < '0')
         if (!isdigit(number[i]))
             return false;
@@ -122,9 +119,11 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    printf("Validation Complete!\n");
+    //DEBUG: Make sure validation is done correctly.
+    //printf("Validation Complete!\n");
 
     //TODO: Create sequencer
+    //TODO: Generate processes based off of argv[1]
     //TODO: Display results of sequencer
 
     fseek(file1, 0, SEEK_END);
@@ -163,6 +162,24 @@ int main(int argc, char *argv[]) {
     }
 
     printf("\nSize of buffer2 is: %d\n",(int)strlen(buffer2));*/
+
+    //Start sequencing
+    for (int i = 0; i < (int) strlen(buffer1);) {
+        for (int j = 0; j < (int) strlen(buffer2); ++j) {
+            if (buffer1[i] == buffer2[j]) { //If current element in subsequence matches main sequence
+                count++; //Increment sessions best result
+            }
+            pos++; //Increment starting position of best match
+            i++;
+        }
+
+
+        if (count > bestCount) {
+            bestCount = count;
+            count = 0; //Reset sessions count
+        }
+    }
+    printf("%ld", bestCount);
 
     free(buffer1);
     fclose(file1);
